@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <b-container>
+    <b-container class="centered">
       <img alt="Vue logo" src="../assets/logo.png" />
       <Navbar />
       <b-card>
@@ -22,9 +22,7 @@
         <div v-show="isFulled === true">V show: {{ name }}</div>
         <!-- v-for -->
         <ul>
-          <li v-for="(value, index) in product" :key="index">
-            {{ value.name }} - {{ value.price }}
-          </li>
+          <li v-for="(value, index) in product" :key="index">{{ value.name }} - {{ value.price }}</li>
         </ul>
         <!-- v-on -->
         <button @click="boom()">Click Me !</button>
@@ -34,8 +32,7 @@
         <a
           :href="url_google"
           v-bind:style="url_google === 'http://google.com' ? isTrue : isFalse"
-          >Click Link Google</a
-        >
+        >Click Link Google</a>
       </b-card>
     </b-container>
   </div>
@@ -73,10 +70,7 @@ export default {
     reverseMessage: {
       // getter
       get() {
-        return this.message
-          .split('')
-          .reverse()
-          .join('')
+        return this.message.split('').reverse().join('')
       },
       // setter
       set(newValue) {
@@ -98,4 +92,8 @@ export default {
 }
 </script>
 
-<style scoped src="../assets/css/style.css"></style>
+<style scoped>
+.centered {
+  text-align: center;
+}
+</style>

@@ -3,7 +3,7 @@
     <h1>Axios Page</h1>
     <!-- ==================================================================== -->
     <b-container>
-      <b-alert :show="alert">{{isMsg}}</b-alert>
+      <b-alert :show="alert">{{ isMsg }}</b-alert>
       <form v-on:submit.prevent="addProduct">
         <input type="text" v-model="form.product_name" placeholder="Product Name" />
         <br />
@@ -30,7 +30,8 @@
             style="max-width: 20rem;"
             class="mb-2"
           >
-            <b-card-text>{{item.product_harga}}</b-card-text>
+            <p>checklist</p>
+            <b-card-text>{{ item.product_harga }}</b-card-text>
             <b-button variant="primary" @click="addToCart(item)">Add To Cart</b-button>
             <b-button variant="success" @click="setProduct(item)">Update</b-button>
             <b-button variant="danger" @click="deleteProduct(item)">Delete</b-button>
@@ -40,8 +41,11 @@
     </b-container>
     <!-- ==================================================================== -->
     <Card nama="Kopi" harga="2000" @increment="incrementCount" />
-    <Card nama="Susu" harga="3000" />
-    <p>{{count}}</p>
+    <Card nama="Susu" harga="3000" v-bind:dataCart="cart" />
+
+    <p>{{ count }}</p>
+    <div v-if="cart.length > 0"></div>
+    <div v-else></div>
   </div>
 </template>
 
@@ -82,8 +86,10 @@ export default {
       this.count += data
     },
     addToCart(data) {
+      console.log(data)
       const setCart = {
         product_id: data.product_id,
+        product_name: data.product_name,
         qty: 1
       }
       // spread opertaor
@@ -111,6 +117,7 @@ export default {
           console.log(response)
           this.alert = true
           this.isMsg = response.data.msg
+          this.get_product()
         })
         .catch((error) => {
           console.log(error)

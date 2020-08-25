@@ -1,7 +1,7 @@
 <template>
   <div class="c-container">
-    <h4>{{nama}}</h4>
-    <p>{{harga}}</p>
+    <h4>{{ nama }}</h4>
+    <p>{{ harga }}</p>
     <button type="button" @click="increment()">Add To Cart</button>
   </div>
 </template>
@@ -9,7 +9,7 @@
 <script>
 export default {
   name: 'Card',
-  props: ['nama', 'harga'],
+  props: ['nama', 'harga', 'dataCart'],
   methods: {
     increment() {
       console.log('Clicked')

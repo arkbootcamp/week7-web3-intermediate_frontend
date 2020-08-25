@@ -1,6 +1,7 @@
 <template>
   <div class="axios">
     <h1>Axios Page</h1>
+    <!-- <b-button :disabled="product_qty === 1" size="lg">-</b-button> -->
     <!-- ==================================================================== -->
     <b-container>
       <b-alert :show="alert">{{ isMsg }}</b-alert>
@@ -30,7 +31,9 @@
             style="max-width: 20rem;"
             class="mb-2"
           >
-            <p>checklist</p>
+            <!-- ========================================= -->
+            <p v-if="checkCart(item)">checklist</p>
+            <!-- ========================================= -->
             <b-card-text>{{ item.product_harga }}</b-card-text>
             <b-button variant="primary" @click="addToCart(item)">Add To Cart</b-button>
             <b-button variant="success" @click="setProduct(item)">Update</b-button>
@@ -82,6 +85,11 @@ export default {
     this.get_product()
   },
   methods: {
+    // ===================================
+    checkCart(data) {
+      return this.cart.some((item) => item.product_id === data.product_id)
+    },
+    // ===================================
     incrementCount(data) {
       this.count += data
     },

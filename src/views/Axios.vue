@@ -1,6 +1,8 @@
 <template>
   <div class="axios">
     <h1>Axios Page</h1>
+    <img alt="Vue logo" src="../assets/logo.png" />
+    <Navbar />
     <!-- <b-button :disabled="product_qty === 1" size="lg">-</b-button> -->
     <!-- ==================================================================== -->
     <b-container>
@@ -41,11 +43,25 @@
           </b-card>
         </b-col>
       </b-row>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        @change="handlePageChange"
+        aria-controls="my-table"
+      ></b-pagination>
+      <div v-for="(value, index) in cart" :key="index">
+        <h6>{{value.product_name}}</h6>
+        <button>-</button>
+        <input type="text" :value="value.qty" />
+        <button @click="incrementCart(value)">+</button>
+        <p>{{value.product_price * value.qty}}</p>
+        <hr />
+      </div>
     </b-container>
     <!-- ==================================================================== -->
     <Card nama="Kopi" harga="2000" @increment="incrementCount" />
     <Card nama="Susu" harga="3000" v-bind:dataCart="cart" />
-
     <p>{{ count }}</p>
     <div v-if="cart.length > 0"></div>
     <div v-else></div>
@@ -55,18 +71,20 @@
 <script>
 import axios from 'axios'
 import Card from '../components/_base/Card'
+import Navbar from '../components/_base/Navbar'
 
 export default {
   name: 'Axios',
   components: {
-    Card
+    Card,
+    Navbar
   },
   data() {
     return {
       count: 0,
       cart: [],
       page: 1,
-      limit: 3,
+      limit: 2,
       sort: '',
       products: [],
       form: {
@@ -78,18 +96,41 @@ export default {
       alert: false,
       isMsg: '',
       isUpdate: false,
-      product_id: ''
+      product_id: '',
+      perPage: 0,
+      currentPage: 1
+    }
+  },
+  computed: {
+    rows() {
+      return this.products.length
     }
   },
   created() {
     this.get_product()
   },
+  updated() {
+    console.log(this.$route.query)
+  },
   methods: {
-    // ===================================
+    handlePageChange(numberPage) {
+      this.$router.push(`?page=${numberPage}`)
+      this.page = numberPage
+      this.get_product()
+    },
+    incrementCart(data) {
+      // console.log(data) // item yang di klik
+      // console.log(this.cart) // array
+      const incrementData = this.cart.find(
+        (value) => value.product_id === data.product_id
+      )
+      incrementData.qty += 1
+      // incrementData.totalPrice = incrementData.price * ....
+      console.log(this.cart)
+    },
     checkCart(data) {
       return this.cart.some((item) => item.product_id === data.product_id)
     },
-    // ===================================
     incrementCount(data) {
       this.count += data
     },
@@ -98,6 +139,7 @@ export default {
       const setCart = {
         product_id: data.product_id,
         product_name: data.product_name,
+        product_price: data.product_harga,
         qty: 1
       }
       // spread opertaor
@@ -111,7 +153,8 @@ export default {
         )
         .then((response) => {
           this.products = response.data.data
-          console.log(this.products)
+          this.perPage = response.data.pagination.totalPage
+          // console.log(this.perPage)
         })
         .catch((error) => {
           console.log(error)
@@ -152,3 +195,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.axios {
+  text-align: center;
+}
+</style>

@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1>Lifecycle Page</h1>
+    <line-chart :data="{'2017-01-01': 11, '2017-01-02': 6}"></line-chart>
     <line-chart :data="chartData"></line-chart>
     <div class="overflow-auto">
       <b-pagination
@@ -19,7 +20,7 @@
         :per-page="perPage"
         :current-page="currentPage"
         small
-      ></b-table> -->
+      ></b-table>-->
     </div>
   </div>
 </template>

@@ -46,10 +46,11 @@
       <b-pagination
         v-model="currentPage"
         :total-rows="rows"
-        :per-page="perPage"
+        :per-page="limit"
         @change="handlePageChange"
         aria-controls="my-table"
       ></b-pagination>
+
       <div v-for="(value, index) in cart" :key="index">
         <h6>{{value.product_name}}</h6>
         <button>-</button>
@@ -84,7 +85,7 @@ export default {
       count: 0,
       cart: [],
       page: 1,
-      limit: 2,
+      limit: 3,
       sort: '',
       products: [],
       form: {
@@ -97,13 +98,13 @@ export default {
       isMsg: '',
       isUpdate: false,
       product_id: '',
-      perPage: 0,
-      currentPage: 1
+      currentPage: 1,
+      totalRows: null
     }
   },
   computed: {
     rows() {
-      return this.products.length
+      return this.totalRows
     }
   },
   created() {
@@ -126,7 +127,7 @@ export default {
       )
       incrementData.qty += 1
       // incrementData.totalPrice = incrementData.price * ....
-      console.log(this.cart)
+      // console.log(this.cart)
     },
     checkCart(data) {
       return this.cart.some((item) => item.product_id === data.product_id)
@@ -135,7 +136,7 @@ export default {
       this.count += data
     },
     addToCart(data) {
-      console.log(data)
+      // console.log(data)
       const setCart = {
         product_id: data.product_id,
         product_name: data.product_name,
@@ -153,8 +154,8 @@ export default {
         )
         .then((response) => {
           this.products = response.data.data
-          this.perPage = response.data.pagination.totalPage
-          // console.log(this.perPage)
+          this.totalRows = response.data.pagination.totalData
+          console.log(this.totalRows)
         })
         .catch((error) => {
           console.log(error)

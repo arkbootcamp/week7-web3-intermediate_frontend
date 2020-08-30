@@ -1,4 +1,4 @@
-<h1 align='center'>#nama_projek</h1>
+<h1 align='center'>Vue JS - #nama_projek</h1>
 
 #background_projek. [More about Vue](https://vuejs.org/)
 

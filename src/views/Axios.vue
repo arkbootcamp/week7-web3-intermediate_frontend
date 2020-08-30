@@ -54,11 +54,12 @@
       <div v-for="(value, index) in cart" :key="index">
         <h6>{{value.product_name}}</h6>
         <button>-</button>
-        <input type="text" :value="value.qty" />
+        <input type="text" :value="value.product_qty" />
         <button @click="incrementCart(value)">+</button>
-        <p>{{value.product_price * value.qty}}</p>
+        <p>{{value.product_total}}</p>
         <hr />
       </div>
+      <h1>{{totals()}}</h1>
     </b-container>
     <!-- ==================================================================== -->
     <Card nama="Kopi" harga="2000" @increment="incrementCount" />
@@ -114,6 +115,13 @@ export default {
     console.log(this.$route.query)
   },
   methods: {
+    totals() {
+      let total = 0
+      this.cart.map(
+        (value) => (total += value.product_price * value.product_qty)
+      )
+      return total
+    },
     handlePageChange(numberPage) {
       this.$router.push(`?page=${numberPage}`)
       this.page = numberPage
@@ -125,7 +133,8 @@ export default {
       const incrementData = this.cart.find(
         (value) => value.product_id === data.product_id
       )
-      incrementData.qty += 1
+      incrementData.product_qty += 1
+      incrementData.product_total = data.product_price * data.product_qty
       // incrementData.totalPrice = incrementData.price * ....
       // console.log(this.cart)
     },
@@ -136,16 +145,30 @@ export default {
       this.count += data
     },
     addToCart(data) {
-      // console.log(data)
       const setCart = {
         product_id: data.product_id,
         product_name: data.product_name,
         product_price: data.product_harga,
-        qty: 1
+        product_qty: 1,
+        product_total: data.product_harga
       }
+      const fixedData = [...this.cart, setCart]
+      const addedItem = fixedData.find(
+        (item) => item.product_id === data.product_id
+      )
+      const existItem = this.cart.find(
+        (item) => item.product_id === data.product_id
+      )
+      if (existItem) {
+        addedItem.product_total = data.product_harga * data.qty
+        addedItem.product_qty += 1
+      } else {
+        this.cart = [...this.cart, setCart]
+      }
+      // console.log(fixedData)
       // spread opertaor
-      this.cart = [...this.cart, setCart]
-      console.log(this.cart)
+      // this.cart = [...this.cart, setCart]
+      // console.log(this.cart)
     },
     get_product() {
       axios
@@ -155,7 +178,7 @@ export default {
         .then((response) => {
           this.products = response.data.data
           this.totalRows = response.data.pagination.totalData
-          console.log(this.totalRows)
+          // console.log(this.totalRows)
         })
         .catch((error) => {
           console.log(error)
@@ -166,7 +189,7 @@ export default {
       axios
         .post('http://127.0.0.1:3001/product', this.form)
         .then((response) => {
-          console.log(response)
+          // console.log(response)
           this.alert = true
           this.isMsg = response.data.msg
           this.get_product()

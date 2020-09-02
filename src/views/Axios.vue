@@ -173,7 +173,7 @@ export default {
     get_product() {
       axios
         .get(
-          `http://127.0.0.1:3001/product?page=${this.page}&limit=${this.limit}`
+          `https://web3-arkademy.fwdev.online/product?page=${this.page}&limit=${this.limit}`
         )
         .then((response) => {
           this.products = response.data.data

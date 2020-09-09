@@ -62,8 +62,10 @@
       <h1>{{totals()}}</h1>
     </b-container>
     <!-- ==================================================================== -->
+    <!-- proses v-for products -->
     <Card nama="Kopi" harga="2000" @increment="incrementCount" />
-    <Card nama="Susu" harga="3000" v-bind:dataCart="cart" />
+    <!-- end looping -->
+    <!-- <Card nama="Susu" harga="3000" v-bind:dataCart="cart" /> -->
     <p>{{ count }}</p>
     <div v-if="cart.length > 0"></div>
     <div v-else></div>
@@ -74,6 +76,7 @@
 import axios from 'axios'
 import Card from '../components/_base/Card'
 import Navbar from '../components/_base/Navbar'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'Axios',
@@ -85,10 +88,10 @@ export default {
     return {
       count: 0,
       cart: [],
-      page: 1,
-      limit: 3,
+      // page: 1,
+      // limit: 3,
       sort: '',
-      products: [],
+      // products: [],
       form: {
         category_id: '',
         product_name: '',
@@ -99,14 +102,20 @@ export default {
       isMsg: '',
       isUpdate: false,
       product_id: '',
-      currentPage: 1,
-      totalRows: null
+      currentPage: 1
+      // totalRows: null
     }
   },
   computed: {
-    rows() {
-      return this.totalRows
-    }
+    ...mapGetters({
+      limit: 'getLimit',
+      page: 'getPage',
+      rows: 'getTotalRows',
+      products: 'getProduct'
+    })
+    // rows() {
+    //   return this.totalRows
+    // }
   },
   created() {
     this.get_product()
@@ -115,6 +124,8 @@ export default {
     console.log(this.$route.query)
   },
   methods: {
+    ...mapActions({ get_product: 'getProducts' }),
+    ...mapMutations(['setPage']),
     totals() {
       let total = 0
       this.cart.map(
@@ -124,7 +135,8 @@ export default {
     },
     handlePageChange(numberPage) {
       this.$router.push(`?page=${numberPage}`)
-      this.page = numberPage
+      // this.page = numberPage
+      this.setPage(numberPage)
       this.get_product()
     },
     incrementCart(data) {
@@ -170,20 +182,20 @@ export default {
       // this.cart = [...this.cart, setCart]
       // console.log(this.cart)
     },
-    get_product() {
-      axios
-        .get(
-          `https://web3-arkademy.fwdev.online/product?page=${this.page}&limit=${this.limit}`
-        )
-        .then((response) => {
-          this.products = response.data.data
-          this.totalRows = response.data.pagination.totalData
-          // console.log(this.totalRows)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
+    // get_product() {
+    //   axios
+    //     .get(
+    //       `http://127.0.0.1:3001/product?page=${this.page}&limit=${this.limit}`
+    //     )
+    //     .then((response) => {
+    //       this.products = response.data.data
+    //       this.totalRows = response.data.pagination.totalData
+    //       // console.log(this.totalRows)
+    //     })
+    //     .catch((error) => {
+    //       console.log(error)
+    //     })
+    // },
     addProduct() {
       console.log(this.form)
       axios

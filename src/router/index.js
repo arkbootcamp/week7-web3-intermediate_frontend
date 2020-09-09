@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Axios from '../views/Axios.vue'
 import Lifecycle from '../views/Lifecycle.vue'
 import Login from '../views/auth/Login.vue'
+import Product from '../views/main/Product.vue'
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -25,6 +26,12 @@ const routes = [
     path: '/lifecycle',
     name: 'Lifecycle',
     component: Lifecycle,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/product',
+    name: 'Product',
+    component: Product,
     meta: { requiresAuth: true }
   },
   {

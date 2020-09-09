@@ -1,4 +1,5 @@
 <template>
+  <!-- v-for products -->
   <div class="c-container">
     <h4>{{ nama }}</h4>
     <p>{{ harga }}</p>

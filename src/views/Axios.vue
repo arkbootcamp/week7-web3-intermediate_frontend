@@ -1,8 +1,8 @@
 <template>
   <div class="axios">
-    <h1>Axios Page</h1>
-    <img alt="Vue logo" src="../assets/logo.png" />
+    <img alt="Vue logo" src="@/assets/logo.png" />
     <Navbar />
+    <hr />
     <!-- <b-button :disabled="product_qty === 1" size="lg">-</b-button> -->
     <!-- ==================================================================== -->
     <b-container>
@@ -15,6 +15,8 @@
         <input type="text" v-model="form.category_id" placeholder="Category Id" />
         <br />
         <input type="text" v-model="form.product_status" placeholder="Product Status" />
+        <br />
+        <input type="file" @change="handleFile" />
         <br />
         <button type="submit" v-show="!isUpdate">Save</button>
         <button type="button" v-show="isUpdate" @click="patchProduct()">Update</button>
@@ -59,155 +61,80 @@
         <p>{{value.product_total}}</p>
         <hr />
       </div>
-      <h1>{{totals()}}</h1>
+      <h1>{{totals}}</h1>
     </b-container>
-    <!-- ==================================================================== -->
-    <!-- proses v-for products -->
-    <Card nama="Kopi" harga="2000" @increment="incrementCount" />
-    <!-- end looping -->
-    <!-- <Card nama="Susu" harga="3000" v-bind:dataCart="cart" /> -->
-    <p>{{ count }}</p>
-    <div v-if="cart.length > 0"></div>
-    <div v-else></div>
   </div>
 </template>
 
 <script>
-import axios from 'axios'
-import Card from '../components/_base/Card'
-import Navbar from '../components/_base/Navbar'
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import Navbar from '@/components/_base/Navbar'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'Axios',
   components: {
-    Card,
     Navbar
   },
   data() {
     return {
-      count: 0,
-      cart: [],
-      // page: 1,
-      // limit: 3,
-      sort: '',
-      // products: [],
+      product_id: '',
       form: {
         category_id: '',
         product_name: '',
         product_harga: '',
-        product_status: ''
+        product_status: '',
+        product_image: ''
       },
       alert: false,
       isMsg: '',
       isUpdate: false,
-      product_id: '',
       currentPage: 1
-      // totalRows: null
     }
   },
   computed: {
     ...mapGetters({
-      limit: 'getLimit',
-      page: 'getPage',
+      products: 'getProduct',
       rows: 'getTotalRows',
-      products: 'getProduct'
+      limit: 'getLimit',
+      cart: 'getCart',
+      totals: 'getTotalsCart'
     })
-    // rows() {
-    //   return this.totalRows
-    // }
-  },
-  created() {
-    this.get_product()
-  },
-  updated() {
-    console.log(this.$route.query)
   },
   methods: {
-    ...mapActions({ get_product: 'getProducts' }),
-    ...mapMutations(['setPage']),
-    totals() {
-      let total = 0
-      this.cart.map(
-        (value) => (total += value.product_price * value.product_qty)
-      )
-      return total
-    },
+    ...mapActions([
+      'getProducts',
+      'addProducts',
+      'updateProducts',
+      'deleteProducts'
+    ]),
+    ...mapMutations(['changePage', 'addToCart', 'incrementCart']),
     handlePageChange(numberPage) {
       this.$router.push(`?page=${numberPage}`)
-      // this.page = numberPage
-      this.setPage(numberPage)
-      this.get_product()
-    },
-    incrementCart(data) {
-      // console.log(data) // item yang di klik
-      // console.log(this.cart) // array
-      const incrementData = this.cart.find(
-        (value) => value.product_id === data.product_id
-      )
-      incrementData.product_qty += 1
-      incrementData.product_total = data.product_price * data.product_qty
-      // incrementData.totalPrice = incrementData.price * ....
-      // console.log(this.cart)
+      this.changePage(numberPage)
+      this.getProducts()
     },
     checkCart(data) {
       return this.cart.some((item) => item.product_id === data.product_id)
     },
-    incrementCount(data) {
-      this.count += data
+    handleFile(e) {
+      this.form.product_image = e.target.files[0]
     },
-    addToCart(data) {
-      const setCart = {
-        product_id: data.product_id,
-        product_name: data.product_name,
-        product_price: data.product_harga,
-        product_qty: 1,
-        product_total: data.product_harga
-      }
-      const fixedData = [...this.cart, setCart]
-      const addedItem = fixedData.find(
-        (item) => item.product_id === data.product_id
-      )
-      const existItem = this.cart.find(
-        (item) => item.product_id === data.product_id
-      )
-      if (existItem) {
-        addedItem.product_total = data.product_harga * data.qty
-        addedItem.product_qty += 1
-      } else {
-        this.cart = [...this.cart, setCart]
-      }
-      // console.log(fixedData)
-      // spread opertaor
-      // this.cart = [...this.cart, setCart]
-      // console.log(this.cart)
-    },
-    // get_product() {
-    //   axios
-    //     .get(
-    //       `http://127.0.0.1:3001/product?page=${this.page}&limit=${this.limit}`
-    //     )
-    //     .then((response) => {
-    //       this.products = response.data.data
-    //       this.totalRows = response.data.pagination.totalData
-    //       // console.log(this.totalRows)
-    //     })
-    //     .catch((error) => {
-    //       console.log(error)
-    //     })
-    // },
     addProduct() {
-      console.log(this.form)
-      axios
-        .post('http://127.0.0.1:3001/product', this.form)
+      const data = new FormData()
+      data.append('product_name', this.form.product_name)
+      data.append('category_id', this.form.category_id)
+      data.append('product_harga', this.form.product_harga)
+      data.append('product_status', this.form.product_status)
+      data.append('product_image', this.form.product_image)
+      this.addProducts(data)
         .then((response) => {
-          // console.log(response)
           this.alert = true
-          this.isMsg = response.data.msg
-          this.get_product()
+          this.isMsg = response.msg
+          this.getProducts()
         })
         .catch((error) => {
-          console.log(error)
+          this.alert = true
+          this.isMsg = error.data.msg
         })
     },
     setProduct(data) {
@@ -215,19 +142,32 @@ export default {
         product_name: data.product_name,
         category_id: data.category_id,
         product_harga: data.product_harga,
-        product_status: data.product_status
+        product_status: data.product_status,
+        product_image: data.product_image
       }
       this.isUpdate = true
       this.product_id = data.product_id
     },
     patchProduct() {
-      console.log(this.product_id)
-      console.log(this.form)
+      const data = new FormData()
+      data.append('product_name', this.form.product_name)
+      data.append('category_id', this.form.category_id)
+      data.append('product_harga', this.form.product_harga)
+      data.append('product_status', this.form.product_status)
+      data.append('product_image', this.form.product_image)
+      const setData = {
+        product_id: this.product_id,
+        form: data
+      }
+      this.updateProducts(setData)
       this.isUpdate = false
     },
     deleteProduct(data) {
-      console.log(data.product_id)
+      this.deleteProducts(data.product_id)
     }
+  },
+  created() {
+    this.getProducts()
   }
 }
 </script>

@@ -10,7 +10,7 @@ export default {
     setUser(state, payload) {
       state.user = payload
       state.token = payload.token
-      // console.log(payload)
+      console.log(state.user)
     },
     delUser(state) {
       state.user = {}
@@ -37,6 +37,7 @@ export default {
     // proses register
     logout(context) {
       localStorage.removeItem('token')
+      sessionStorage.clear()
       context.commit('delUser')
       router.push('/login')
     },
@@ -69,6 +70,7 @@ export default {
               error.response.data.msg === 'invalid signature'
             ) {
               localStorage.removeItem('token')
+              sessionStorage.clear()
               context.commit('delUser')
               router.push('/login')
               alert(
@@ -76,6 +78,7 @@ export default {
               )
             } else if (error.response.data.msg === 'jwt expired') {
               localStorage.removeItem('token')
+              sessionStorage.clear()
               context.commit('delUser')
               router.push('/login')
               alert('Maaf token session anda telah habis !')
@@ -89,6 +92,9 @@ export default {
   getters: {
     isLogin(state) {
       return state.token !== null
+    },
+    setUser(state) {
+      return state.user
     }
   }
 }

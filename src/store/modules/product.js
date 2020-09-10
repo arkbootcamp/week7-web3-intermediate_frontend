@@ -5,7 +5,7 @@ export default {
     count: 0,
     cart: [],
     page: 1,
-    limit: 6,
+    limit: 3,
     sort: '',
     products: [],
     totalRows: null

@@ -62,6 +62,7 @@
         <hr />
       </div>
       <h1>{{totals}}</h1>
+      <button @click="getUser">Profile</button>
     </b-container>
   </div>
 </template>
@@ -97,7 +98,8 @@ export default {
       rows: 'getTotalRows',
       limit: 'getLimit',
       cart: 'getCart',
-      totals: 'getTotalsCart'
+      totals: 'getTotalsCart',
+      user: 'setUser'
     })
   },
   methods: {
@@ -164,6 +166,9 @@ export default {
     },
     deleteProduct(data) {
       this.deleteProducts(data.product_id)
+    },
+    getUser() {
+      console.log(this.user)
     }
   },
   created() {

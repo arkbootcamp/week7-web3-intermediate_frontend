@@ -3,6 +3,10 @@
     <img alt="Vue logo" src="@/assets/logo.png" />
     <Navbar />
     <hr />
+    <h1>{{user.user_name}}</h1>
+    <!-- <form onchange="searching"> -->
+    <input type="text" v-on:input="searching" />
+    <!-- </form> -->
     <!-- <b-button :disabled="product_qty === 1" size="lg">-</b-button> -->
     <!-- ==================================================================== -->
     <b-container>
@@ -89,13 +93,15 @@ export default {
       alert: false,
       isMsg: '',
       isUpdate: false,
-      currentPage: 1
+      currentPage: 1,
+      pages: 1
     }
   },
   computed: {
     ...mapGetters({
       products: 'getProduct',
       rows: 'getTotalRows',
+      page: 'getPage',
       limit: 'getLimit',
       cart: 'getCart',
       totals: 'getTotalsCart',
@@ -110,8 +116,13 @@ export default {
       'deleteProducts'
     ]),
     ...mapMutations(['changePage', 'addToCart', 'incrementCart']),
+    searching(event) {
+      console.log(event.data)
+    },
     handlePageChange(numberPage) {
-      this.$router.push(`?page=${numberPage}`)
+      if (parseInt(this.$route.query.page) !== numberPage) {
+        this.$router.push(`?page=${numberPage}`)
+      }
       this.changePage(numberPage)
       this.getProducts()
     },

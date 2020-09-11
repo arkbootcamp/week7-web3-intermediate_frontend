@@ -5,7 +5,7 @@ export default {
     count: 0,
     cart: [],
     page: 1,
-    limit: 3,
+    limit: 6,
     sort: '',
     products: [],
     totalRows: null
@@ -86,6 +86,9 @@ export default {
     }
   },
   getters: {
+    getPage(state) {
+      return state.page
+    },
     getLimit(state) {
       return state.limit
     },

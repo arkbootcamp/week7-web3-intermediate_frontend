@@ -13,7 +13,6 @@
       ></b-pagination>
 
       <p class="mt-3">Current Page: {{ currentPage }}</p>
-
       <!-- <b-table
         id="my-table"
         :items="items"
@@ -21,6 +20,7 @@
         :current-page="currentPage"
         small
       ></b-table>-->
+      <video src="http://iandevlin.github.io/mdn/video-player/video/tears-of-steel-battle-clip-medium.mp4" width="50%" controls></video>
     </div>
   </div>
 </template>
@@ -53,6 +53,10 @@ export default {
   },
   updated() {
     console.log(this.currentPage)
+  },
+  mounted() {
+    // this.$refs.videoRef.src = 'http://iandevlin.github.io/mdn/video-player/video/tears-of-steel-battle-clip-medium.mp4'
+    // this.$refs.videoRef.pause()
   }
 }
 </script>

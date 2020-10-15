@@ -34,15 +34,35 @@
           v-bind:style="url_google === 'http://google.com' ? isTrue : isFalse"
         >Click Link Google</a>
       </b-card>
+      <b-card>
+        <h5>Custom Directive</h5>
+        <input type="text" v-focus>
+        <p v-fontsize="fontSizes <= 5 ? 'small' : 'medium'">Hello World</p>
+      </b-card>
+      <b-card>
+        <h5>Mixins</h5>
+         <b-button id="show-btn" @click="showModal">Open Modal</b-button>
+          <b-button id="toggle-btn" @click="toggleModal">Toggle Modal</b-button>
+
+          <b-modal ref="my-modal" hide-footer title="Using Component Methods">
+            <div class="d-block text-center">
+              <h3>Hello From My Modal!</h3>
+            </div>
+            <b-button class="mt-3" variant="outline-danger" block @click="hideModal">Close Me</b-button>
+            <b-button class="mt-2" variant="outline-warning" block @click="toggleModal">Toggle Me</b-button>
+          </b-modal>
+      </b-card>
     </b-container>
   </div>
 </template>
 
 <script>
+import mixins from '../mixins/mixins'
 import Navbar from '../components/_base/Navbar'
 
 export default {
   name: 'Home',
+  mixins: [mixins],
   data() {
     return {
       name: 'Bagus Tri Harjanto',
@@ -60,6 +80,23 @@ export default {
       },
       isFalse: {
         color: 'red'
+      },
+      fontSizes: 1,
+      msg: 'this message in home.vue'
+    }
+  },
+  created() {
+    console.log(this.msg)
+  },
+  directives: {
+    fontsize: {
+      bind: function(el, binding) {
+        console.log(binding)
+        if (binding.value === 'small') {
+          el.style.fontSize = '5px'
+        } else {
+          el.style.fontSize = '25px'
+        }
       }
     }
   },
@@ -87,6 +124,14 @@ export default {
     search() {
       console.log('Search !')
       alert('Search !')
+    },
+    showModal() {
+      this.$refs['my-modal'].show()
+    },
+    toggleModal() {
+      // We pass the ID of the button that we want to return focus to
+      // when the modal has hidden
+      this.$refs['my-modal'].toggle('#toggle-btn')
     }
   }
 }

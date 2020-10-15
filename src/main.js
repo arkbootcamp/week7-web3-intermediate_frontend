@@ -16,6 +16,14 @@ Vue.use(IconsPlugin)
 
 Vue.config.productionTip = false
 
+Vue.directive('focus', {
+  // Saat elemen yang terikat dimasukan ke dalam DOM...
+  inserted: function (el) {
+    // Fokus terhadap elemen
+    el.focus()
+  }
+})
+
 new Vue({
   router,
   store,

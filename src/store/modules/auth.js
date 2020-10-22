@@ -26,6 +26,7 @@ export default {
             console.log(response)
             context.commit('setUser', response.data.data)
             localStorage.setItem('token', response.data.data.token)
+            localStorage.setItem('refreshToken', response.data.data.refreshToken)
             // router.push('/')
             resolve(response.data.msg)
           })
@@ -37,6 +38,7 @@ export default {
     // proses register
     logout(context) {
       localStorage.removeItem('token')
+      localStorage.removeItem('refreshToken')
       sessionStorage.clear()
       context.commit('delUser')
       router.push('/login')
@@ -69,19 +71,40 @@ export default {
               error.response.data.msg === 'invalid token' ||
               error.response.data.msg === 'invalid signature'
             ) {
-              localStorage.removeItem('token')
-              sessionStorage.clear()
-              context.commit('delUser')
-              router.push('/login')
+              context.dispatch('logout')
+              // localStorage.removeItem('token')
+              // localStorage.removeItem('refreshToken')
+              // sessionStorage.clear()
+              // context.commit('delUser')
+              // router.push('/login')
               alert(
                 'Maaf token anda salah dan anda tidak bisa melanjutkan di halaman ini !'
               )
             } else if (error.response.data.msg === 'jwt expired') {
-              localStorage.removeItem('token')
-              sessionStorage.clear()
-              context.commit('delUser')
-              router.push('/login')
-              alert('Maaf token session anda telah habis !')
+              const setData = {
+                userId: context.state.user.user_id,
+                refreshToken: localStorage.getItem('refreshToken')
+              }
+              axios
+                .post('http://127.0.0.1:3001/users/token', setData)
+                .then(response => {
+                  console.log(response)
+                  localStorage.removeItem('token')
+                  localStorage.removeItem('refreshToken')
+                  localStorage.setItem('token', response.data.data.token)
+                  localStorage.setItem('refreshToken', response.data.data.refreshToken)
+                  context.commit('setUser', response.data.data)
+                  location.reload()
+                })
+                .catch(error => {
+                  alert(error.response.data.msg)
+                  context.dispatch('logout')
+                  // localStorage.removeItem('token')
+                  // localStorage.removeItem('refreshToken')
+                  // sessionStorage.clear()
+                  // context.commit('delUser')
+                  // router.push('/login')
+                })
             }
           }
           return Promise.reject(error)

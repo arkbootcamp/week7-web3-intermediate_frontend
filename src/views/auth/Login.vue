@@ -32,8 +32,8 @@ export default {
   data() {
     return {
       form: {
-        user_email: '',
-        user_password: ''
+        user_email: 'bagustri15@gmail.com',
+        user_password: '123456'
       }
     }
   },
